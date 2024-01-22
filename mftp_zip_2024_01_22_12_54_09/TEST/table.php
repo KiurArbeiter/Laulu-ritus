@@ -51,6 +51,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 // Select * from osalejad
 $result = $yhendus->query("SELECT * FROM osalejad");
 $data = $result->fetch_all(MYSQLI_ASSOC);
+$date = new DateTime('2024-01-01', new DateTimeZone('Pacific/Nauru'));
+$date->setTimezone(new DateTimeZone('Pacific/Chatham'));
 ?>
 
 <!DOCTYPE html>
@@ -79,14 +81,19 @@ $data = $result->fetch_all(MYSQLI_ASSOC);
             </tr>
             <?php foreach ($data as $row): ?>
                 <tr>
-                    <td><?php echo $row['eesnimi']; ?></td>
-                    <td><?php echo $row['perenimi']; ?></td>
-                    <td><?php echo $row['koorinimi']; ?></td>
-                    <td>
-                        <input type="datetime-local" name="esinemiskuupaev[<?php echo $row['id']; ?>]" value="<?php echo date('Y-m-d\TH:i', strtotime($row['esinemiskuupaev'])); ?>" required>
-                    </td>
-                </tr>
+                <td><?php echo $row['eesnimi']; ?></td>
+                <td><?php echo $row['perenimi']; ?></td>
+                <td><?php echo $row['koorinimi']; ?></td>
+                <td>
+                    <?php
+                    $currentYear = date('Y');
+                    $currentDate = date('Y-m-d\TH:i', strtotime($currentYear . '-01-01'));
+                    ?>
+                    <input type="datetime-local" name="esinemiskuupaev[<?php echo $row['id']; ?>]" value="<?php echo date('Y-m-d\TH:i', strtotime($row['esinemiskuupaev'])); ?>" min="<?php echo $currentDate; ?>" required>
+                </td>
+            </tr>
             <?php endforeach; ?>
+            
         </table>
 
         <input type="submit" value="Uuenda andmed">
